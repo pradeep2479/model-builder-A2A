@@ -1,0 +1,16 @@
+# Python Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# Data Files - NEVER commit large data files to Git
+data/
+outputs/
+
+# IDE and OS specific
+.idea/
+.vscode/
+.DS_Store
+
+# Logs
+*.log
