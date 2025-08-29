@@ -78,22 +78,35 @@ def ceo_reasoning_node(state: PipelineState) -> PipelineState:
 
 # --- 2. The "Hands": The Tool-Executing Nodes ---
 def ingestion_node(state: PipelineState) -> PipelineState:
+    """Runs the Data Ingestion Agent."""
     print("\n--- Running Tool: Data Ingestion ---")
-    agent = DataIngestionAgent(input_dir="./data", output_dir="./outputs/01_ingestion", nrows=5000)
+    # THE FIX IS HERE: Add agent_name
+    agent = DataIngestionAgent(
+        agent_name="Data Ingestion Tool", 
+        input_dir="./data", 
+        output_dir="./outputs/01_ingestion", 
+        nrows=5000
+    )
     output_path = agent.execute()
+    
     state['current_artifact_path'] = output_path
     state['agent_history'].append("data_ingestion")
     state['tool_output_summary'] = f"Data ingestion complete. Artifact saved to {output_path}."
-    state['llm_response'] = {"next_tool": "human_review"} # Force human review after tool runs
     return state
 
 def eda_node(state: PipelineState) -> PipelineState:
+    """Runs the EDA Agent."""
     print("\n--- Running Tool: EDA ---")
-    agent = EdaAgent(input_dir=state['current_artifact_path'], output_dir="./outputs/02_eda")
+    # THE FIX IS HERE: Add agent_name
+    agent = EdaAgent(
+        agent_name="EDA Tool", 
+        input_dir=state['current_artifact_path'], 
+        output_dir="./outputs/02_eda"
+    )
     output_path = agent.execute()
+    
     state['agent_history'].append("eda")
     state['tool_output_summary'] = f"EDA complete. Report saved in {output_path}."
-    state['llm_response'] = {"next_tool": "human_review"} # Force human review
     return state
 
 def human_review_node(state: PipelineState) -> PipelineState:
